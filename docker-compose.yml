@@ -1,0 +1,79 @@
+version: '3.7'
+
+services:
+
+  # Reverse proxy
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+    hostname: nginx
+    depends_on:
+      - auth-service
+      - product-service
+    ports:
+      - 80:80
+    networks:
+      - main:
+
+  # Database product
+  mongo-product:
+    image: mongo:nanoserver
+    container_name: mongodb-product
+    hostname: mongo-product
+    volumes:
+      - mongo-product:/data/db
+    ports:
+      - 27017:27017
+    restart:
+      always
+    networks:
+      main:
+  
+  # Database user
+  mongo-user:
+    image: mongo:nanoserver
+    container_name: mongodb-user
+    hostname: mongo-user
+    volumes:
+      - mongo-user:/data/db
+    ports:
+      - 27017:27017
+    restart:
+      always
+    networks:
+      main:
+
+  auth-service:
+    image: auth-service
+    container_name: auth-service
+    hostname: auth-services
+    build :
+      context: ./auth-services
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+    networks:
+      main:
+      database-user:
+
+  product-service:
+    image: product-service
+    container_name: product-service
+    hostname: product-services
+    build :
+      context: ./product-services
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongo-user
+      - mongo-product
+    networks:
+      main:
+      database-product:
+
+networks:
+  main:
+  database-user:
+  database-product:
