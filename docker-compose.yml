@@ -19,7 +19,7 @@ services:
   # Database product
   mongo-product:
     image: mongo:nanoserver
-    container_name: mongodb-product
+    container_name: mongo-product
     hostname: mongo-product
     volumes:
       - mongo-product:/data/db
@@ -33,7 +33,7 @@ services:
   # Database user
   mongo-user:
     image: mongo:nanoserver
-    container_name: mongodb-user
+    container_name: mongo-user
     hostname: mongo-user
     volumes:
       - mongo-user:/data/db
