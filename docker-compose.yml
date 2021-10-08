@@ -10,70 +10,49 @@ services:
     hostname: nginx
     depends_on:
       - auth-service
-      - product-service
     ports:
       - 80:80
     networks:
-      - main:
+      - app
 
   # Database product
-  mongo-product:
-    image: mongo:nanoserver
-    container_name: mongo-product
-    hostname: mongo-product
-    volumes:
-      - mongo-product:/data/db
-    ports:
-      - 27017:27017
-    restart:
-      always
-    networks:
-      main:
-  
+  # mongo-product:
+  #   image: mongo:latest
+  #   container_name: mongo-product
+  #   hostname: mongo-product
+  #   volumes:
+  #     - "./mongo-product:/data/db"
+  #   ports:
+  #     - 27017:27017
+  #   restart:
+  #     always
+
   # Database user
   mongo-user:
-    image: mongo:nanoserver
+    image: mongo:focal
     container_name: mongo-user
     hostname: mongo-user
     volumes:
-      - mongo-user:/data/db
+      - "./mongo-user:/data/db"
     ports:
       - 27017:27017
     restart:
       always
     networks:
-      main:
+      - app
 
   auth-service:
     image: auth-service
     container_name: auth-service
-    hostname: auth-services
+    hostname: auth-service
     build :
-      context: ./auth-services
+      context: ./auth-service
     ports:
       - 3000:3000
     depends_on:
-      - mongo
-    networks:
-      main:
-      database-user:
-
-  product-service:
-    image: product-service
-    container_name: product-service
-    hostname: product-services
-    build :
-      context: ./product-services
-    ports:
-      - 5000:5000
-    depends_on:
       - mongo-user
-      - mongo-product
     networks:
-      main:
-      database-product:
+      - app
 
 networks:
-  main:
-  database-user:
-  database-product:
+  app:
